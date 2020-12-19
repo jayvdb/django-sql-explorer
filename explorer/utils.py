@@ -84,12 +84,19 @@ def safe_cast(val, to_type, default=None):
     try:
         return to_type(val)
     except ValueError:
-        return default
+        return to_type(default)
 
 
 def get_int_from_request(request, name, default):
     val = request.GET.get(name, default)
-    return safe_cast(val, int, default) if val else None
+    if val is default:
+       val = request.POST.get(name, default)
+    if not val:
+        return None
+    try:
+        return safe_cast(val, int, default)
+    except ValueError:
+        return None
 
 
 def get_params_from_request(request):
@@ -116,8 +123,8 @@ def url_get_rows(request):
     )
 
 
-def url_get_query_id(request):
-    return get_int_from_request(request, 'query_id', None)
+def url_get_query_id(request, default=None):
+    return get_int_from_request(request, 'query_id', default)
 
 
 def url_get_log_id(request):
