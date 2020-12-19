@@ -28,6 +28,8 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
         sql = request.POST.get('sql', '')
         connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
+        if not sql:
+            raise SuspiciousOperation
         ql = query.log(request.user)
         query.title = f'Playground-{ql.id}'
         return _export(request, query)

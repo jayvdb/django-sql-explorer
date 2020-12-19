@@ -565,6 +565,20 @@ class TestSQLDownloadViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'application/json')
 
+    def test_sql_download_bad_sql(self):
+        url = reverse("download_sql")
+
+        response = self.client.post(url, {'sql': 'bad;'})
+
+        self.assertEqual(response.status_code, 500)
+
+    def test_sql_download_blank_sql(self):
+        url = reverse("download_sql")
+
+        response = self.client.post(url, {'sql': ''})
+
+        self.assertEqual(response.status_code, 400)
+
 
 class TestSchemaView(TestCase):
 
